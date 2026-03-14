@@ -4,7 +4,6 @@ import {
   tokensToXp,
   checkEvolution,
   shouldRelease,
-  getStages,
   newEncounter,
   resolveSpeciesMeta,
 } from '../lib/evolution.mjs';
@@ -38,8 +37,6 @@ const G = '\x1b[32m',
   DIM = '\x1b[2m',
   RESET = '\x1b[0m';
 
-const RELEASE_LEVEL = 60;
-
 let input = '';
 process.stdin.on('data', (chunk) => (input += chunk));
 process.stdin.on('end', () => {
@@ -55,7 +52,7 @@ async function main() {
     return;
   }
 
-  // Derive XP from session token counts
+  // Compute level from banked XP + live session tokens
   let session = {};
   try {
     session = JSON.parse(input);
@@ -64,46 +61,38 @@ async function main() {
     (session.context_window?.total_input_tokens || 0) +
     (session.context_window?.total_output_tokens || 0);
 
-  // New session detection: token counts reset to 0 each session
-  let dirty = false;
-  if (totalTokens < (state.prev_tokens || 0)) {
-    state.prev_tokens = 0;
-    dirty = true;
+  const sessionXp = tokensToXp(totalTokens);
+  const level = computeLevel((state.banked_xp || 0) + sessionXp);
+
+  // Persist session tokens periodically so session-start can bank them
+  if (totalTokens - (state.last_session_tokens || 0) >= 10000) {
+    state.last_session_tokens = totalTokens;
+    saveTrainer(state);
   }
 
-  const newXp = tokensToXp(totalTokens, state.prev_tokens || 0);
-
-  if (newXp > 0) {
-    state.xp = (state.xp || 0) + newXp;
-    state.prev_tokens = totalTokens;
-    state.level = computeLevel(state.xp);
-    dirty = true;
-  }
-
-  // Only check evolution/release when level crosses a threshold
-  const releaseLevel = state.is_final
-    ? RELEASE_LEVEL
-    : state.target_level || 30;
-  if (dirty && state.level >= (state.target_level || 30)) {
+  // Check evolution/release when level crosses threshold
+  const stages = state.stages || [];
+  if (stages.length > 0 && level >= (state.target_level || 30)) {
     try {
-      const stages = await getStages(state.chain_id);
-      const evolved = checkEvolution(state, stages);
+      const evolved = checkEvolution(state.species, level, stages);
       if (evolved) {
         const oldName = capitalize(state.species);
-        state.species = evolved.species;
-        state.species_id = evolved.speciesId;
-        state.just_evolved = true;
         const meta = await resolveSpeciesMeta(
           evolved.speciesId,
-          state.chain_id,
           evolved.species,
+          stages,
         );
         Object.assign(state, {
+          species: evolved.species,
+          species_id: evolved.speciesId,
+          just_evolved: true,
           types: meta.types,
           genus: meta.genus,
           target_level: meta.targetLevel,
+          release_level: meta.releaseLevel,
           is_final: meta.isFinal,
         });
+        saveTrainer(state);
 
         try {
           const sprite = await renderSprite(evolved.speciesId);
@@ -115,30 +104,34 @@ async function main() {
             `\n  What? ${oldName} is evolving!\n\n  Congratulations! ${oldName} evolved into ${capitalize(evolved.species)}!\n`,
           );
         }
-      } else if (shouldRelease(state, stages)) {
-        recordPokemon(state);
+        render(state, level);
+        process.exit(0);
+        return;
+      }
+
+      if (shouldRelease(state.species, level, stages)) {
+        recordPokemon({ ...state, level });
         const encounter = await newEncounter();
-        const meta = await resolveSpeciesMeta(
-          encounter.speciesId,
-          encounter.chainId,
-          encounter.species,
-        );
-        Object.assign(state, {
+        const newState = {
+          ...state,
           chain_id: encounter.chainId,
           species: encounter.species,
           species_id: encounter.speciesId,
           started_species: encounter.species,
           started_species_id: encounter.speciesId,
-          xp: 0,
-          level: 1,
-          prev_tokens: totalTokens,
+          banked_xp: 0,
+          last_session_tokens: 0,
           just_evolved: false,
-          types: meta.types,
-          genus: meta.genus,
-          target_level: meta.targetLevel,
-          is_final: meta.isFinal,
+          types: encounter.types,
+          genus: encounter.genus,
+          target_level: encounter.targetLevel,
+          release_level: encounter.releaseLevel,
+          is_final: encounter.isFinal,
+          stages: encounter.stages,
           dex_count: (state.dex_count || 0) + 1,
-        });
+        };
+        saveTrainer(newState);
+
         try {
           const sprite = await renderSprite(encounter.speciesId);
           console.log(
@@ -149,28 +142,34 @@ async function main() {
             `\n  A wild ${capitalize(encounter.species)} appeared!\n\n  Your new companion awaits...\n`,
           );
         }
+        render(newState, 1);
+        process.exit(0);
+        return;
       }
     } catch (e) {
-      process.stderr.write(`statusmon evolution check: ${e.message}\n`);
+      process.stderr.write(`statusmon evolution: ${e.message}\n`);
     }
   }
 
-  if (dirty) saveTrainer(state);
-
-  // Clear sparkle after first render
-  if (state.just_evolved && !dirty) {
+  // Clear sparkle after one render
+  if (state.just_evolved) {
     state.just_evolved = false;
     saveTrainer(state);
   }
 
-  // Render statusline from denormalized state — no API calls needed
+  render(state, level);
+  process.exit(0);
+}
+
+function render(state, level) {
   const name = capitalize(state.species);
   const emoji = TYPE_EMOJI[state.types?.[0]] || '❓';
   const typeStr = (state.types || ['normal']).map(capitalize).join('/');
   const genus = state.genus || 'Pokémon';
   const indicator = state.just_evolved ? ' ✨' : state.is_final ? ' ★' : '';
+  const releaseLevel = state.release_level || 60;
 
-  const pct = Math.min(1, state.level / releaseLevel);
+  const pct = Math.min(1, level / releaseLevel);
   const barW = 12;
   const filled = Math.round(pct * barW);
   const barColor = pct > 0.5 ? G : pct > 0.25 ? Y : C;
@@ -178,9 +177,8 @@ async function main() {
 
   const dexStr = state.dex_count > 0 ? ` · #${state.dex_count}` : '';
 
-  console.log(` ${emoji} ${name}${indicator} Lv.${state.level}${barStr}`);
+  console.log(` ${emoji} ${name}${indicator} Lv.${level}${barStr}`);
   console.log(`    ${DIM}${typeStr} · ${genus}${dexStr}${RESET}`);
-  process.exit(0);
 }
 
 function capitalize(s) {

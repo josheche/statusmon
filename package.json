@@ -5,7 +5,8 @@
   "description": "Train a Pokemon companion across your Claude Code sessions",
   "license": "MIT",
   "dependencies": {
-    "pngjs": "^7.0.0"
+    "pngjs": "^7.0.0",
+    "pokedex-promise-v2": "^4.2.1"
   },
   "devDependencies": {
     "esbuild": "^0.24.0",

@@ -1,32 +1,26 @@
 import { loadTrainer, saveTrainer, createTrainer } from '../lib/trainer.mjs';
-import { newEncounter, resolveSpeciesMeta } from '../lib/evolution.mjs';
-import { fetchCached } from '../lib/cache.mjs';
+import { newEncounter, tokensToXp } from '../lib/evolution.mjs';
 
 async function main() {
   let state = loadTrainer();
 
   if (!state || !state.species) {
+    // First run — assign a random starter
     const encounter = await newEncounter();
-    const meta = await resolveSpeciesMeta(encounter.speciesId, encounter.chainId, encounter.species);
-    state = createTrainer(encounter.chainId, encounter.species, encounter.speciesId, meta);
+    state = createTrainer(encounter);
   } else {
-    // Pre-cache in parallel
-    await Promise.all([
-      fetchCached(`pokemon-species/${state.species_id}`),
-      fetchCached(`evolution-chain/${state.chain_id}`),
-      fetchCached(`pokemon/${state.species_id}`),
-    ]).catch(() => {});
-
-    // Backfill denormalized fields if missing (upgrade from older state format)
-    if (!state.types) {
-      const meta = await resolveSpeciesMeta(state.species_id, state.chain_id, state.species);
-      Object.assign(state, { types: meta.types, genus: meta.genus, target_level: meta.targetLevel, is_final: meta.isFinal });
-    }
+    // Bank previous session's XP
+    const sessionXp = tokensToXp(state.last_session_tokens || 0);
+    state.banked_xp = (state.banked_xp || 0) + sessionXp;
+    state.last_session_tokens = 0;
   }
 
   state.sessions = (state.sessions || 0) + 1;
-  state.prev_tokens = 0; // Session JSON token counts reset each session
   saveTrainer(state);
 }
 
-main().catch(() => {}).finally(() => process.exit(0));
+main()
+  .catch((e) => {
+    process.stderr.write(`statusmon session-start: ${e.message}\n`);
+  })
+  .finally(() => process.exit(0));
