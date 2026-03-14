@@ -8,10 +8,26 @@
     "pngjs": "^7.0.0"
   },
   "devDependencies": {
-    "esbuild": "^0.24.0"
+    "esbuild": "^0.24.0",
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.0.0",
+    "vitest": "^3.0.0"
   },
   "scripts": {
     "build": "node build.mjs",
-    "test:sprite": "node lib/sprite.mjs"
+    "test": "vitest run",
+    "test:sprite": "node lib/sprite.mjs",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.mjs": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   }
 }
