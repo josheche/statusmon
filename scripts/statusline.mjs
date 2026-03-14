@@ -79,8 +79,8 @@ async function main() {
     dirty = true;
   }
 
-  // Check evolution (uses denormalized data first, falls back to API)
-  if (dirty && !state.is_final) {
+  // Check evolution and release
+  if (dirty) {
     try {
       const stages = await getStages(state.chain_id);
       const evolved = checkEvolution(state, stages);
