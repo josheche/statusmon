@@ -32,6 +32,11 @@ async function main() {
   const totalTokens = (session.context_window?.total_input_tokens || 0)
     + (session.context_window?.total_output_tokens || 0);
 
+  // New session detection: token counts reset to 0 each session
+  if (totalTokens < (state.prev_tokens || 0)) {
+    state.prev_tokens = 0;
+  }
+
   const newXp = tokensToXp(totalTokens, state.prev_tokens || 0);
   let dirty = false;
 

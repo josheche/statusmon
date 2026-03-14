@@ -25,6 +25,7 @@ async function main() {
   }
 
   state.sessions = (state.sessions || 0) + 1;
+  state.prev_tokens = 0; // Session JSON token counts reset each session
   saveTrainer(state);
 }
 
