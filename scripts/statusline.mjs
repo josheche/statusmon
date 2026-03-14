@@ -102,12 +102,16 @@ async function main() {
         });
         dirty = true;
 
-        // Queue announcement for Stop hook to deliver
+        // Print announcement directly — statusline output is what the user sees
         try {
           const sprite = await renderSprite(evolved.speciesId);
-          state.pending_announcement = `\n  What? ${oldName} is evolving!\n\n${sprite}\n\n  Congratulations! ${oldName} evolved into ${capitalize(evolved.species)}!\n`;
+          console.log(
+            `\n  What? ${oldName} is evolving!\n\n${sprite}\n\n  Congratulations! ${oldName} evolved into ${capitalize(evolved.species)}!\n`,
+          );
         } catch {
-          state.pending_announcement = `\n  What? ${oldName} is evolving!\n\n  Congratulations! ${oldName} evolved into ${capitalize(evolved.species)}!\n`;
+          console.log(
+            `\n  What? ${oldName} is evolving!\n\n  Congratulations! ${oldName} evolved into ${capitalize(evolved.species)}!\n`,
+          );
         }
       } else if (shouldRelease(state, stages)) {
         recordPokemon(state);
@@ -135,9 +139,13 @@ async function main() {
         dirty = true;
         try {
           const sprite = await renderSprite(encounter.speciesId);
-          state.pending_announcement = `\n  A wild ${capitalize(encounter.species)} appeared!\n\n${sprite}\n\n  Your new companion awaits...\n`;
+          console.log(
+            `\n  A wild ${capitalize(encounter.species)} appeared!\n\n${sprite}\n\n  Your new companion awaits...\n`,
+          );
         } catch {
-          state.pending_announcement = `\n  A wild ${capitalize(encounter.species)} appeared!\n\n  Your new companion awaits...\n`;
+          console.log(
+            `\n  A wild ${capitalize(encounter.species)} appeared!\n\n  Your new companion awaits...\n`,
+          );
         }
       }
     } catch {}
