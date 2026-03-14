@@ -14,6 +14,7 @@ await esbuild.build({
   entryPoints: [
     'scripts/statusline.mjs',
     'scripts/session-start.mjs',
+    'scripts/announce.mjs',
   ],
 });
 

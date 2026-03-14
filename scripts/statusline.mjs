@@ -61,11 +61,13 @@ async function main() {
         Object.assign(state, { types: meta.types, genus: meta.genus, target_level: meta.targetLevel, is_final: meta.isFinal });
         dirty = true;
 
-        // Sprite announcement via stderr (won't interfere with statusline stdout)
+        // Queue announcement for Stop hook to deliver
         try {
           const sprite = await renderSprite(evolved.speciesId);
-          process.stderr.write(`\n  What? ${oldName} is evolving!\n\n${sprite}\n\n  ${oldName} evolved into ${capitalize(evolved.species)}!\n\n`);
-        } catch {}
+          state.pending_announcement = `\n  What? ${oldName} is evolving!\n\n${sprite}\n\n  Congratulations! ${oldName} evolved into ${capitalize(evolved.species)}!\n`;
+        } catch {
+          state.pending_announcement = `\n  What? ${oldName} is evolving!\n\n  Congratulations! ${oldName} evolved into ${capitalize(evolved.species)}!\n`;
+        }
       } else if (shouldRelease(state, stages)) {
         recordPokemon(state);
         const encounter = await newEncounter();
@@ -79,8 +81,10 @@ async function main() {
         dirty = true;
         try {
           const sprite = await renderSprite(encounter.speciesId);
-          process.stderr.write(`\n  A wild ${capitalize(encounter.species)} appeared!\n\n${sprite}\n\n`);
-        } catch {}
+          state.pending_announcement = `\n  A wild ${capitalize(encounter.species)} appeared!\n\n${sprite}\n\n  Your new companion awaits...\n`;
+        } catch {
+          state.pending_announcement = `\n  A wild ${capitalize(encounter.species)} appeared!\n\n  Your new companion awaits...\n`;
+        }
       }
     } catch {}
   }
