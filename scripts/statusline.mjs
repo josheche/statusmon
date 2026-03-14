@@ -168,12 +168,9 @@ async function main() {
   process.exit(0);
 }
 
-// Cached inline sprite for the current Pokemon (generated once per process)
-let cachedInline = null;
-let cachedInlineId = null;
-
 async function render(state, level) {
   const name = capitalize(state.species);
+  const emoji = TYPE_EMOJI[state.types?.[0]] || '❓';
   const typeStr = (state.types || ['normal']).map(capitalize).join('/');
   const genus = state.genus || 'Pokémon';
   const indicator = state.just_evolved ? ' ✨' : state.is_final ? ' ★' : '';
@@ -183,24 +180,71 @@ async function render(state, level) {
   const barW = 12;
   const filled = Math.round(pct * barW);
   const barColor = pct > 0.5 ? G : pct > 0.25 ? Y : C;
-  const barStr = `  ${barColor}${'█'.repeat(filled)}${'░'.repeat(barW - filled)}${RESET} → Lv.${releaseLevel}`;
-
+  const barStr = `${barColor}${'█'.repeat(filled)}${'░'.repeat(barW - filled)}${RESET} → Lv.${releaseLevel}`;
   const dexStr = state.dex_count > 0 ? ` · #${state.dex_count}` : '';
 
-  // Use inline PNG sprite if terminal supports it, otherwise type emoji
-  let icon = TYPE_EMOJI[state.types?.[0]] || '❓';
-  if (supportsInlineImages()) {
-    try {
-      if (cachedInlineId !== state.species_id) {
-        cachedInline = await inlineSprite(state.species_id);
-        cachedInlineId = state.species_id;
-      }
-      icon = cachedInline;
-    } catch {}
-  }
+  // Render sprite alongside info
+  let spriteRows = [];
+  try {
+    spriteRows = await miniSprite(state.species_id);
+  } catch {}
 
-  console.log(` ${icon} ${name}${indicator} Lv.${level}${barStr}`);
-  console.log(`    ${DIM}${typeStr} · ${genus}${dexStr}${RESET}`);
+  if (spriteRows.length > 0) {
+    // Info lines positioned vertically centered next to sprite
+    const mid = Math.floor(spriteRows.length / 2) - 2;
+    const infoLines = {
+      [mid]: `  ${emoji} ${name}${indicator} Lv.${level}`,
+      [mid + 1]: `  ${barStr}`,
+      [mid + 2]: `  ${DIM}${typeStr} · ${genus}${dexStr}${RESET}`,
+    };
+    for (let i = 0; i < spriteRows.length; i++) {
+      console.log(` ${spriteRows[i]}${infoLines[i] || ''}`);
+    }
+  } else {
+    // Fallback: no sprite, just text
+    console.log(` ${emoji} ${name}${indicator} Lv.${level}  ${barStr}`);
+    console.log(`    ${DIM}${typeStr} · ${genus}${dexStr}${RESET}`);
+  }
+}
+
+async function miniSprite(pokemonId) {
+  const { PNG } = await import('pngjs');
+  const { fetchSprite } = await import('../lib/cache.mjs');
+  const buf = await fetchSprite(pokemonId);
+  const src = PNG.sync.read(buf);
+  const w = 32,
+    h = 32;
+  const sx = src.width / w,
+    sy = src.height / h;
+  const rows = [];
+  for (let y = 0; y < h; y += 2) {
+    let line = '';
+    for (let x = 0; x < w; x++) {
+      const ti = (Math.floor(y * sy) * src.width + Math.floor(x * sx)) * 4;
+      const bi =
+        (Math.floor((y + 1) * sy) * src.width + Math.floor(x * sx)) * 4;
+      const ta = src.data[ti + 3],
+        ba = src.data[bi + 3];
+      if (ta < 64 && ba < 64) {
+        line += ' ';
+        continue;
+      }
+      if (ta < 64) {
+        line += `\x1b[38;2;${src.data[bi]};${src.data[bi + 1]};${src.data[bi + 2]}m▄\x1b[0m`;
+        continue;
+      }
+      if (ba < 64) {
+        line += `\x1b[38;2;${src.data[ti]};${src.data[ti + 1]};${src.data[ti + 2]}m▀\x1b[0m`;
+        continue;
+      }
+      line += `\x1b[38;2;${src.data[ti]};${src.data[ti + 1]};${src.data[ti + 2]};48;2;${src.data[bi]};${src.data[bi + 1]};${src.data[bi + 2]}m▀\x1b[0m`;
+    }
+    rows.push(line);
+  }
+  // Trim empty rows from top and bottom
+  while (rows.length > 0 && rows[0].trim() === '') rows.shift();
+  while (rows.length > 0 && rows[rows.length - 1].trim() === '') rows.pop();
+  return rows;
 }
 
 function capitalize(s) {
