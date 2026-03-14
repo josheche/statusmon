@@ -129,7 +129,7 @@ async function main() {
           started_species_id: encounter.speciesId,
           xp: 0,
           level: 1,
-          prev_tokens: totalTokens,
+          prev_tokens: 0,
           just_evolved: false,
           types: meta.types,
           genus: meta.genus,
