@@ -22,7 +22,10 @@
     "test:sprite": "node lib/sprite.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "version": "node scripts/sync-version.mjs && git add .claude-plugin/",
+    "prepublishOnly": "npm test && npm run build",
+    "postpublish": "git push && git push --tags"
   },
   "lint-staged": {
     "*.mjs": [

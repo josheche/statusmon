@@ -1,7 +1,11 @@
 {
   "name": "statusmon",
-  "owner": { "name": "Josh Echeverri" },
-  "metadata": { "description": "Train a Pokemon companion across your Claude Code sessions" },
+  "owner": {
+    "name": "Josh Echeverri"
+  },
+  "metadata": {
+    "description": "Train a Pokemon companion across your Claude Code sessions"
+  },
   "plugins": [
     {
       "name": "statusmon",
