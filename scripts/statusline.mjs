@@ -1,6 +1,7 @@
 import { loadTrainer, saveTrainer } from '../lib/trainer.mjs';
 import { computeLevel, tokensToXp, checkEvolution, shouldRelease, getStages, findCurrentStageIndex, newEncounter, resolveSpeciesMeta } from '../lib/evolution.mjs';
 import { renderSprite } from '../lib/sprite.mjs';
+import { recordPokemon, loadPokedex } from '../lib/pokedex.mjs';
 
 const TYPE_EMOJI = {
   normal: '⬜', fire: '🔥', water: '💧', grass: '🌿',
@@ -61,10 +62,12 @@ async function main() {
           process.stderr.write(`\n  What? ${oldName} is evolving!\n\n${sprite}\n\n  ${oldName} evolved into ${capitalize(evolved.species)}!\n\n`);
         } catch {}
       } else if (shouldRelease(state, stages)) {
+        recordPokemon(state);
         const encounter = await newEncounter();
         const meta = await resolveSpeciesMeta(encounter.speciesId, encounter.chainId, encounter.species);
         Object.assign(state, {
           chain_id: encounter.chainId, species: encounter.species, species_id: encounter.speciesId,
+          started_species: encounter.species, started_species_id: encounter.speciesId,
           xp: 0, level: 1, prev_tokens: totalTokens, just_evolved: false,
           types: meta.types, genus: meta.genus, target_level: meta.targetLevel, is_final: meta.isFinal,
         });
@@ -102,8 +105,11 @@ async function main() {
     barStr = `  ${barColor}${'█'.repeat(filled)}${'░'.repeat(barW - filled)}${RESET} → Lv.${targetLevel}`;
   }
 
+  const dexCount = loadPokedex().length;
+  const dexStr = dexCount > 0 ? ` · #${dexCount}` : '';
+
   console.log(` ${emoji} ${name}${indicator} Lv.${state.level}${barStr}`);
-  console.log(`    ${DIM}${typeStr} · ${genus}${RESET}`);
+  console.log(`    ${DIM}${typeStr} · ${genus}${dexStr}${RESET}`);
   process.exit(0);
 }
 
