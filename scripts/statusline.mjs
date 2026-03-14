@@ -6,8 +6,13 @@ import {
   shouldRelease,
   newEncounter,
   resolveSpeciesMeta,
+  GEN_CAPS,
 } from '../lib/evolution.mjs';
-import { renderSprite } from '../lib/sprite.mjs';
+import {
+  renderSprite,
+  inlineSprite,
+  supportsInlineImages,
+} from '../lib/sprite.mjs';
 import { recordPokemon } from '../lib/pokedex.mjs';
 
 const TYPE_EMOJI = {
@@ -104,14 +109,16 @@ async function main() {
             `\n  What? ${oldName} is evolving!\n\n  Congratulations! ${oldName} evolved into ${capitalize(evolved.species)}!\n`,
           );
         }
-        render(state, level);
+        await render(state, level);
         process.exit(0);
         return;
       }
 
       if (shouldRelease(state.species, level, stages)) {
         recordPokemon({ ...state, level });
-        const encounter = await newEncounter();
+        const gen = state.generation || 1;
+        const maxSpecies = GEN_CAPS[Math.min(gen, GEN_CAPS.length) - 1];
+        const encounter = await newEncounter(maxSpecies);
         const newState = {
           ...state,
           chain_id: encounter.chainId,
@@ -142,7 +149,7 @@ async function main() {
             `\n  A wild ${capitalize(encounter.species)} appeared!\n\n  Your new companion awaits...\n`,
           );
         }
-        render(newState, 1);
+        await render(newState, 1);
         process.exit(0);
         return;
       }
@@ -157,13 +164,16 @@ async function main() {
     saveTrainer(state);
   }
 
-  render(state, level);
+  await render(state, level);
   process.exit(0);
 }
 
-function render(state, level) {
+// Cached inline sprite for the current Pokemon (generated once per process)
+let cachedInline = null;
+let cachedInlineId = null;
+
+async function render(state, level) {
   const name = capitalize(state.species);
-  const emoji = TYPE_EMOJI[state.types?.[0]] || '❓';
   const typeStr = (state.types || ['normal']).map(capitalize).join('/');
   const genus = state.genus || 'Pokémon';
   const indicator = state.just_evolved ? ' ✨' : state.is_final ? ' ★' : '';
@@ -177,7 +187,19 @@ function render(state, level) {
 
   const dexStr = state.dex_count > 0 ? ` · #${state.dex_count}` : '';
 
-  console.log(` ${emoji} ${name}${indicator} Lv.${level}${barStr}`);
+  // Use inline PNG sprite if terminal supports it, otherwise type emoji
+  let icon = TYPE_EMOJI[state.types?.[0]] || '❓';
+  if (supportsInlineImages()) {
+    try {
+      if (cachedInlineId !== state.species_id) {
+        cachedInline = await inlineSprite(state.species_id);
+        cachedInlineId = state.species_id;
+      }
+      icon = cachedInline;
+    } catch {}
+  }
+
+  console.log(` ${icon} ${name}${indicator} Lv.${level}${barStr}`);
   console.log(`    ${DIM}${typeStr} · ${genus}${dexStr}${RESET}`);
 }
 
