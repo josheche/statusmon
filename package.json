@@ -1,0 +1,17 @@
+{
+  "name": "statusmon",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Train a Pokemon companion across your Claude Code sessions",
+  "license": "MIT",
+  "dependencies": {
+    "pngjs": "^7.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "test:sprite": "node lib/sprite.mjs"
+  }
+}
