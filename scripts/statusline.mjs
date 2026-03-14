@@ -211,7 +211,7 @@ async function render(state, level) {
   const name = capitalize(state.species);
   const emoji = TYPE_EMOJI[state.types?.[0]] || '❓';
   const types = state.types || ['normal'];
-  const typeStr = types.map(capitalize).join(' / ');
+  const typeStr = types.map(capitalize).join(' · ');
   const genus = state.genus || 'Pokémon';
   const indicator = state.just_evolved ? ' ✨' : state.is_final ? ' ★' : '';
   const releaseLevel = state.release_level || 60;
@@ -221,45 +221,31 @@ async function render(state, level) {
     (state.banked_xp || 0) + tokensToXp(state.last_session_tokens || 0);
   const gen = state.generation || 1;
   const dexCount = state.dex_count || 0;
+  const dexNum = state.species_id || '?';
 
   // XP bar with type color
   const pct = Math.min(1, level / releaseLevel);
-  const barW = 18;
+  const barW = 20;
   const filled = Math.round(pct * barW);
   const barFill = `${tc}${'━'.repeat(filled)}${RESET}`;
-  const barEmpty = `${tcd}${'╌'.repeat(barW - filled)}${RESET}`;
+  const barEmpty = `${tcd}${'─'.repeat(barW - filled)}${RESET}`;
 
-  // Spaced name for that Pokemon game feel
-  const spacedName = name.toUpperCase().split('').join(' ');
-
-  // Card width (visible chars)
-  const cardW = 28;
-  const h = '─';
-  const border = tc;
-
-  // Build the card
-  const card = [
-    `${border}╭${'─'.repeat(cardW)}╮${RESET}`,
-    `${border}│${RESET}${' '.repeat(cardW)}${border}│${RESET}`,
-    `${border}│${RESET}  ${emoji} ${tc}${BOLD}${spacedName}${RESET}${indicator}${pad(cardW - visLen(spacedName) - visLen(indicator) - 4)}${border}│${RESET}`,
-    `${border}│${RESET}  ${DIM}${genus}${RESET}${pad(cardW - visLen(genus) - 2)}${border}│${RESET}`,
-    `${border}│${RESET}${' '.repeat(cardW)}${border}│${RESET}`,
-    `${border}├${'─'.repeat(cardW)}┤${RESET}`,
-    `${border}│${RESET}${' '.repeat(cardW)}${border}│${RESET}`,
-    `${border}│${RESET}  ${DIM}LV${RESET} ${BOLD}${level}${RESET}${pad(cardW - String(level).length - 5)}${border}│${RESET}`,
-    `${border}│${RESET}  ${barFill}${barEmpty}  ${border}│${RESET}`,
-    `${border}│${RESET}  ${DIM}→ Lv.${releaseLevel}${RESET}${pad(cardW - String(releaseLevel).length - 7)}${border}│${RESET}`,
-    `${border}│${RESET}${' '.repeat(cardW)}${border}│${RESET}`,
-    `${border}├${'─'.repeat(cardW)}┤${RESET}`,
-    `${border}│${RESET}${' '.repeat(cardW)}${border}│${RESET}`,
-    `${border}│${RESET}  ${tc}▸${RESET} ${typeStr}${pad(cardW - visLen(typeStr) - 4)}${border}│${RESET}`,
-    `${border}│${RESET}  ${DIM}XP ${totalXp}${RESET}${pad(cardW - String(totalXp).length - 5)}${border}│${RESET}`,
-    `${border}│${RESET}  ${DIM}Gen ${gen}${dexCount > 0 ? ` · Pokédex #${dexCount}` : ''}${RESET}${pad(cardW - visLen(`Gen ${gen}${dexCount > 0 ? ` · Pokédex #${dexCount}` : ''}`) - 2)}${border}│${RESET}`,
-    `${border}│${RESET}${' '.repeat(cardW)}${border}│${RESET}`,
-    `${border}╰${'─'.repeat(cardW)}╯${RESET}`,
+  // Open layout — no boxes, just clean spacing and type-colored accents
+  const info = [
+    ``,
+    `${tc}${BOLD}${name.toUpperCase()}${RESET}${indicator}`,
+    `${DIM}#${dexNum} · ${genus}${RESET}`,
+    ``,
+    `${DIM}LV${RESET} ${BOLD}${level}${RESET}  ${DIM}→ ${releaseLevel}${RESET}`,
+    `${barFill}${barEmpty}`,
+    ``,
+    `${emoji} ${tc}${typeStr}${RESET}`,
+    `${DIM}${state.started_at || ''}${RESET}`,
+    ``,
+    `${tcd}XP ${RESET}${DIM}${totalXp}${RESET}  ${tcd}GEN ${RESET}${DIM}${gen}${RESET}${dexCount > 0 ? `  ${tcd}DEX ${RESET}${DIM}#${dexCount}${RESET}` : ''}`,
   ];
 
-  // Render sprite alongside card
+  // Render sprite alongside info
   let spriteRows = [];
   try {
     spriteRows = await miniSprite(state.species_id);
@@ -268,27 +254,19 @@ async function render(state, level) {
   if (spriteRows.length > 0) {
     const offset = Math.max(
       0,
-      Math.floor((spriteRows.length - card.length) / 2),
+      Math.floor((spriteRows.length - info.length) / 2),
     );
-    const totalRows = Math.max(spriteRows.length, card.length + offset);
+    const totalRows = Math.max(spriteRows.length, info.length + offset);
     for (let i = 0; i < totalRows; i++) {
       const sprite = i < spriteRows.length ? spriteRows[i] : ' '.repeat(48);
-      const cardIdx = i - offset;
-      const cardLine =
-        cardIdx >= 0 && cardIdx < card.length ? '  ' + card[cardIdx] : '';
-      console.log(` ${sprite}${cardLine}`);
+      const infoIdx = i - offset;
+      const infoLine =
+        infoIdx >= 0 && infoIdx < info.length ? '   ' + info[infoIdx] : '';
+      console.log(` ${sprite}${infoLine}`);
     }
   } else {
-    card.forEach((line) => console.log(` ${line}`));
+    info.forEach((line) => console.log(` ${line}`));
   }
-}
-
-function visLen(s) {
-  return s.replace(/\x1b\[[0-9;]*m/g, '').length;
-}
-
-function pad(n) {
-  return n > 0 ? ' '.repeat(n) : '';
 }
 
 async function miniSprite(pokemonId) {
