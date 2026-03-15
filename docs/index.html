@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Statusmon — Train Pokemon in Claude Code</title>
 <meta name="description" content="A Pokemon companion that lives in your Claude Code statusline. Train, evolve, catch 'em all.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 @font-face {
   font-family: 'GameFreak';
@@ -42,8 +44,9 @@
   --dark: #0f380f;
   --poison: #0f380f;
   --ice: #0f380f;
-  --font-display: 'GameFreak', 'Silkscreen', cursive;
-  --font-mono: 'PkmnRBYGSC', 'Silkscreen', monospace;
+  --font-display: 'GameFreak', cursive;
+  --font-body: 'PkmnRBYGSC', monospace;
+  --font-terminal: 'Fira Code', 'Courier New', monospace;
 }
 
 html { scroll-behavior: smooth; }
@@ -51,7 +54,7 @@ html { scroll-behavior: smooth; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.7;
   overflow-x: hidden;
@@ -234,7 +237,7 @@ nav .star-btn:hover {
 
 .install-box pre {
   padding: 24px;
-  font-family: var(--font-mono);
+  font-family: var(--font-terminal);
   font-size: 14px;
   line-height: 2;
   overflow-x: auto;
@@ -251,7 +254,7 @@ nav .star-btn:hover {
   color: var(--gb-lightest);
   padding: 6px 14px;
   border-radius: 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-terminal);
   font-size: 12px;
   cursor: pointer;
   transition: all 0.2s;
@@ -424,7 +427,7 @@ section p {
 }
 .terminal-body {
   padding: 16px 20px;
-  font-family: var(--font-mono);
+  font-family: var(--font-terminal);
   font-size: 12.5px;
   line-height: 1.3;
   margin: 0;
@@ -434,7 +437,7 @@ section p {
 .terminal-sprite-art {
   padding: 4px 20px 12px;
   margin: 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-terminal);
   font-size: 11px;
   line-height: 1;
   background: transparent;
@@ -448,7 +451,7 @@ section p {
   border: 3px solid var(--gb-darkest);
   border-radius: 0;
   padding: 24px;
-  font-family: var(--font-mono);
+  font-family: var(--font-terminal);
   font-size: 13px;
   line-height: 1.8;
   overflow-x: auto;
