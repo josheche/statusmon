@@ -23,17 +23,18 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root {
-  /* Game Boy 4-shade green LCD palette */
-  --gb-lightest: #9bbc0f;
-  --gb-light: #8bac0f;
-  --gb-dark: #306230;
-  --gb-darkest: #0f380f;
+  /* Game Boy palette — extracted from original hardware */
+  --gb-lightest: #b8c19e;
+  --gb-light: #b8c0a4;
+  --gb-mid: #858b77;
+  --gb-dark: #515548;
+  --gb-darkest: #474b3c;
 
-  --bg: #9bbc0f;
-  --bg-surface: #8bac0f;
-  --bg-elevated: #7a9b0e;
-  --text: #0f380f;
-  --text-dim: #306230;
+  --bg: #b8c19e;
+  --bg-surface: #b8c0a4;
+  --bg-elevated: #a8b094;
+  --text: #474b3c;
+  --text-dim: #515548;
   --grass: #0f380f;
   --fire: #0f380f;
   --water: #0f380f;
@@ -69,8 +70,8 @@ body::after {
     0deg,
     transparent,
     transparent 2px,
-    rgba(15,56,15,0.06) 2px,
-    rgba(15,56,15,0.06) 4px
+    rgba(71,75,60,0.06) 2px,
+    rgba(71,75,60,0.06) 4px
   );
   pointer-events: none;
   z-index: 9999;
@@ -286,6 +287,7 @@ section h2 {
   font-family: var(--font-display);
   font-size: 32px;
   letter-spacing: 2px;
+  text-transform: uppercase;
   margin-bottom: 16px;
 }
 
