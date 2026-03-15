@@ -212,7 +212,7 @@ async function render(state, level, totalTokens) {
   const types = state.types || ['normal'];
   const typeStr = types.map(capitalize).join(' · ');
   const genus = state.genus || 'Pokémon';
-  const indicator = state.just_evolved ? ' ✨' : state.is_final ? ' ★' : '';
+  const dexUrl = `https://www.pokemon.com/us/pokedex/${state.species}`;
   const releaseLevel = state.release_level || 60;
   const tc = typeColor(types);
   const tcd = typeColorDim(types);
@@ -236,8 +236,9 @@ async function render(state, level, totalTokens) {
   const barEmpty = `${tcd}${'─'.repeat(barW - filled)}${RESET}`;
 
   // 2 lines above sprite
+  const dexLink = `\x1b]8;;${dexUrl}\x07#${dexNum}\x1b]8;;\x07`;
   console.log(
-    ` ${emoji} ${tc}${BOLD}${name.toUpperCase()}${RESET}${indicator} ${DIM}LV${RESET}${BOLD}${level}${RESET} ${DIM}#${dexNum} · ${genus} · Gen ${gen}${RESET}`,
+    ` ${emoji} ${tc}${BOLD}${name.toUpperCase()}${RESET} ${DIM}LV${RESET}${BOLD}${level}${RESET} ${DIM}· ${dexLink} · ${genus} · Gen ${gen}${RESET}`,
   );
   console.log(` ${barFill}${barEmpty}`);
 
