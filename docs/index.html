@@ -66,6 +66,28 @@
   --font-display: 'GameFreak', cursive;
   --font-body: 'PkmnRBYGSC', monospace;
   --font-terminal: 'Fira Code', 'Courier New', monospace;
+
+  /* ─── FLUID TYPE SCALE ───
+     Each tier pairs font-size + letter-spacing so display fonts
+     never overflow. Fluid range: 320px → 960px viewport.        */
+  --fs-hero:        clamp(24px, 7.5vw, 96px);
+  --ls-hero:        clamp(0px, calc(0.5vw - 1px), 6px);
+
+  --fs-display:     clamp(28px, 4vw, 48px);   /* big decorative nums */
+  --ls-display:     2px;
+
+  --fs-heading:     clamp(20px, 4vw, 32px);   /* section h2 */
+  --ls-heading:     2px;
+
+  --fs-subheading:  clamp(14px, 2vw, 16px);   /* card h3, step h3 */
+  --ls-subheading:  1px;
+
+  --fs-label:       clamp(10px, 1.5vw, 12px); /* section-label, badges */
+  --ls-label:       4px;
+
+  --fs-body:        clamp(13px, 1.8vw, 15px);
+  --fs-small:       clamp(12px, 1.5vw, 14px);
+  --fs-xs:          clamp(11px, 1.3vw, 13px);
 }
 
 html { scroll-behavior: smooth; }
@@ -74,7 +96,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--fs-body);
   line-height: 1.7;
   overflow-x: hidden;
 }
@@ -183,7 +205,7 @@ nav .star-btn:hover {
   padding: 6px 16px;
   border: 2px solid var(--gb-darkest);
   border-radius: 0;
-  font-size: 12px;
+  font-size: var(--fs-label);
   color: var(--grass);
   margin-bottom: 32px;
   animation: fadeUp 0.8s ease-out;
@@ -203,8 +225,8 @@ nav .star-btn:hover {
 
 .hero h1 {
   font-family: var(--font-display);
-  font-size: clamp(48px, 8vw, 96px);
-  letter-spacing: 6px;
+  font-size: var(--fs-hero);
+  letter-spacing: var(--ls-hero);
   line-height: 1;
   margin-bottom: 24px;
   animation: fadeUp 0.8s ease-out 0.1s both;
@@ -213,7 +235,7 @@ nav .star-btn:hover {
 .hero h1 span { color: var(--gb-darkest); }
 
 .hero .tagline {
-  font-size: 18px;
+  font-size: var(--fs-subheading);
   color: var(--text-dim);
   margin-bottom: 48px;
   animation: fadeUp 0.8s ease-out 0.2s both;
@@ -250,14 +272,14 @@ nav .star-btn:hover {
 .install-box .dot-g { width: 10px; height: 10px; border-radius: 0; background: var(--gb-dark); border: 2px solid var(--gb-darkest); }
 .install-box .titlebar span {
   margin-left: auto;
-  font-size: 12px;
+  font-size: var(--fs-label);
   color: var(--text-dim);
 }
 
 .install-box pre {
   padding: 24px;
   font-family: var(--font-terminal);
-  font-size: 14px;
+  font-size: var(--fs-small);
   line-height: 2;
   overflow-x: auto;
 }
@@ -295,16 +317,16 @@ section {
 
 .section-label {
   font-family: var(--font-display);
-  font-size: 12px;
-  letter-spacing: 4px;
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-label);
   text-transform: uppercase;
   margin-bottom: 12px;
 }
 
 section h2 {
   font-family: var(--font-display);
-  font-size: 32px;
-  letter-spacing: 2px;
+  font-size: var(--fs-heading);
+  letter-spacing: var(--ls-heading);
   text-transform: uppercase;
   margin-bottom: 16px;
 }
@@ -334,17 +356,17 @@ section p {
 }
 
 .feature-card .icon {
-  font-size: 32px;
+  font-size: var(--fs-heading);
   margin-bottom: 16px;
 }
 .feature-card h3 {
   font-family: var(--font-display);
-  font-size: 16px;
-  letter-spacing: 1px;
+  font-size: var(--fs-subheading);
+  letter-spacing: var(--ls-subheading);
   margin-bottom: 8px;
 }
 .feature-card p {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--text-dim);
   margin-bottom: 0;
 }
@@ -367,19 +389,19 @@ section p {
 }
 .how-step .num {
   font-family: var(--font-display);
-  font-size: 48px;
+  font-size: var(--fs-display);
   color: var(--grass);
   opacity: 0.3;
   margin-bottom: 8px;
 }
 .how-step h3 {
   font-family: var(--font-display);
-  font-size: 14px;
-  letter-spacing: 1px;
+  font-size: var(--fs-subheading);
+  letter-spacing: var(--ls-subheading);
   margin-bottom: 8px;
 }
 .how-step p {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   color: var(--text-dim);
   margin-bottom: 0;
 }
@@ -392,8 +414,8 @@ section p {
 }
 .gen-table th {
   font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 2px;
+  font-size: var(--fs-label);
+  letter-spacing: var(--ls-heading);
   text-transform: uppercase;
   color: var(--text-dim);
   text-align: left;
@@ -402,7 +424,7 @@ section p {
 }
 .gen-table td {
   padding: 14px 16px;
-  font-size: 14px;
+  font-size: var(--fs-small);
   border-bottom: 1px solid var(--gb-dark);
 }
 .gen-table tr:hover td {
@@ -472,7 +494,7 @@ section p {
   border-radius: 0;
   padding: 24px;
   font-family: var(--font-terminal);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   line-height: 1.8;
   overflow-x: auto;
   margin-top: 24px;
@@ -486,7 +508,7 @@ footer {
   text-align: center;
   padding: 60px 24px;
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: var(--fs-xs);
   border-top: 3px solid var(--gb-darkest);
 }
 footer .pokeball {
@@ -510,6 +532,11 @@ footer .pokeball::after {
 }
 
 /* ─── RESPONSIVE ─── */
+.gen-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 @media (max-width: 768px) {
   .how-grid { grid-template-columns: 1fr; }
   nav .links a:not(.star-btn) { display: none; }
@@ -740,6 +767,7 @@ footer .pokeball::after {
   <h2>Generations</h2>
   <p>Start your journey in Kanto. Unlock new regions as you train more Pokemon.</p>
 
+  <div class="gen-table-wrap">
   <table class="gen-table">
     <thead>
       <tr>
@@ -782,6 +810,7 @@ footer .pokeball::after {
       </tr>
     </tbody>
   </table>
+  </div>
 </section>
 
 <section>
