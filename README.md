@@ -76,7 +76,7 @@ That's it. Open Claude Code — your starter Pokemon appears. Code normally. Wat
 Every Claude Code session generates tokens. Statusmon converts those tokens into XP:
 
 ```
-session_xp  = floor(total_tokens / 10,000)
+session_xp  = floor(total_tokens / 7,500)
 total_xp    = banked_xp + session_xp
 level       = floor(total_xp / 3) + 1
 ```
@@ -85,9 +85,9 @@ XP banks automatically between sessions. Your Pokemon's level persists and grows
 
 | Session size | Tokens | XP earned | Levels |
 |-------------|--------|-----------|--------|
-| Light | ~50K | 5 | ~2 |
-| Normal | ~100K | 10 | ~3 |
-| Heavy | ~200K | 20 | ~7 |
+| Light | ~50K | 6 | ~2 |
+| Normal | ~100K | 13 | ~4 |
+| Heavy | ~200K | 26 | ~9 |
 
 **Evolution** happens at the real game levels from PokeAPI — Charmander evolves at Lv.16, Charmeleon at Lv.36. When your Pokemon evolves, a full-color ANSI sprite announcement appears.
 
