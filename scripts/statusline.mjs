@@ -148,7 +148,6 @@ async function main() {
             `\n  What? ${oldName} is evolving!\n\n  Congratulations! ${oldName} evolved into ${capitalize(evolved.species)}!\n`,
           );
         }
-        await render(state, level);
         process.exit(0);
         return;
       }
@@ -188,7 +187,6 @@ async function main() {
             `\n  A wild ${capitalize(encounter.species)} appeared!\n\n  Your new companion awaits...\n`,
           );
         }
-        await render(newState, 1);
         process.exit(0);
         return;
       }
