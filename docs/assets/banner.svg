@@ -109,11 +109,6 @@
     <rect x="40" y="0" width="6" height="6"/>
   </g>
 
-  <!-- Version -->
-  <text x="400" y="178" text-anchor="middle" font-family="monospace" font-size="10" fill="#858b77" letter-spacing="2">
-    v0.1.0
-  </text>
-
   <!-- Pokeball right (monochrome) -->
   <g transform="translate(710, 100)" opacity="0.12">
     <circle r="40" fill="none" stroke="#474b3c" stroke-width="3"/>

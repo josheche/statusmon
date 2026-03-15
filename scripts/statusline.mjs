@@ -7,6 +7,7 @@ import {
   newEncounter,
   resolveSpeciesMeta,
   GEN_CAPS,
+  TOKENS_PER_XP,
 } from '../lib/evolution.mjs';
 import {
   renderSprite,
@@ -201,11 +202,11 @@ async function main() {
     saveTrainer(state);
   }
 
-  await render(state, level);
+  await render(state, level, totalTokens);
   process.exit(0);
 }
 
-async function render(state, level) {
+async function render(state, level, totalTokens) {
   const name = capitalize(state.species);
   const emoji = TYPE_EMOJI[state.types?.[0]] || '❓';
   const types = state.types || ['normal'];
@@ -215,14 +216,16 @@ async function render(state, level) {
   const releaseLevel = state.release_level || 60;
   const tc = typeColor(types);
   const tcd = typeColorDim(types);
-  const totalXp =
-    (state.banked_xp || 0) + tokensToXp(state.last_session_tokens || 0);
   const gen = state.generation || 1;
   const dexCount = state.dex_count || 0;
   const dexNum = state.species_id || '?';
 
-  // XP bar with type color
-  const pct = Math.min(1, level / releaseLevel);
+  // Smooth XP bar — use raw tokens for continuous progress, not quantized level
+  // Tokens needed for release level: (releaseLevel - 1) * 3 * TOKENS_PER_XP
+  const banked = state.banked_xp || 0;
+  const totalXpRaw = banked + totalTokens / TOKENS_PER_XP; // fractional, not floored
+  const releaseLevelXp = (releaseLevel - 1) * 3; // XP needed for release
+  const pct = Math.min(1, totalXpRaw / releaseLevelXp);
   const barW = 30;
   const filled = Math.round(pct * barW);
   const barFill = `${tc}${'━'.repeat(filled)}${RESET}`;
