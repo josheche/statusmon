@@ -24,9 +24,8 @@ A Pokemon companion lives in your Claude Code statusline. Every coding session e
 **Code more → earn XP → level up → evolve → catch 'em all.** Gen 1 Kanto (151 Pokemon). Pokedex tracking. Type-colored UI. Zero config beyond install.
 
 ```
- 🌿 TANGELA #114 · Vine Pokemon · Gen 1
- LV 13 -> 20
- ━━━━━━━━━━━━━━━━━━━━───────────
+ 🌿 TANGROWTH LV36 · #465 · Vine Pokemon · Gen 1
+ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━──────────────
 
       ▄██▄▄ ▄  ▄▄
     ▄ █▀██▀██▀█▀██▀▄
@@ -77,18 +76,18 @@ That's it. Open Claude Code — your starter Pokemon appears. Code normally. Wat
 Every Claude Code session generates tokens. Statusmon converts those tokens into XP:
 
 ```
-session_xp  = floor(total_tokens / 25,000)
+session_xp  = floor(total_tokens / 10,000)
 total_xp    = banked_xp + session_xp
 level       = floor(total_xp / 3) + 1
 ```
 
-XP banks automatically between sessions. Your Pokemon's level persists and grows over time.
+XP banks automatically between sessions. Your Pokemon's level persists and grows over time. The XP bar shows progress toward the next level.
 
 | Session size | Tokens | XP earned | Levels |
 |-------------|--------|-----------|--------|
-| Light | ~50K | 2 | ~1 |
-| Normal | ~100K | 4 | ~1-2 |
-| Heavy | ~200K | 8 | ~3 |
+| Light | ~50K | 5 | ~2 |
+| Normal | ~100K | 10 | ~3 |
+| Heavy | ~200K | 20 | ~7 |
 
 **Evolution** happens at the real game levels from PokeAPI — Charmander evolves at Lv.16, Charmeleon at Lv.36. When your Pokemon evolves, a full-color ANSI sprite announcement appears.
 
