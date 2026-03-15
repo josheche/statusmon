@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "statusmon",
-      "source": ".",
+      "source": "./plugin",
       "description": "A Pokemon companion that evolves as you code",
       "version": "0.1.2",
       "license": "MIT"

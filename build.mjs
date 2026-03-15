@@ -16,4 +16,10 @@ await esbuild.build({
   entryPoints: ['scripts/statusline.mjs', 'scripts/session-start.mjs'],
 });
 
-console.log('Build complete → dist/');
+// Copy built files to plugin distribution
+fs.mkdirSync('plugin/scripts', { recursive: true });
+for (const f of fs.readdirSync('dist')) {
+  fs.copyFileSync(`dist/${f}`, `plugin/scripts/${f}`);
+}
+
+console.log('Build complete → dist/ + plugin/scripts/');
