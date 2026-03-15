@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statusmon Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+@font-face {
+  font-family: 'GameFreak';
+  src: url('assets/gffont.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'PkmnRBYGSC';
+  src: url('assets/pkmn-rbygsc.woff2') format('woff2');
+  font-display: swap;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --gb-lightest: #b8c19e;
+  --gb-light: #b8c0a4;
+  --gb-mid: #858b77;
+  --gb-dark: #515548;
+  --gb-darkest: #474b3c;
+  --font-display: 'GameFreak', cursive;
+  --font-body: 'PkmnRBYGSC', monospace;
+  --font-terminal: 'Fira Code', monospace;
+}
+
+body {
+  background: var(--gb-lightest);
+  color: var(--gb-darkest);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+  padding: 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: 36px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  border-bottom: 3px solid var(--gb-darkest);
+  padding-bottom: 16px;
+  margin-bottom: 48px;
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 64px 0 24px;
+  color: var(--gb-dark);
+}
+
+h3 {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 32px 0 12px;
+  color: var(--gb-mid);
+}
+
+p { margin-bottom: 16px; max-width: 640px; }
+hr { border: none; border-top: 2px solid var(--gb-dark); margin: 48px 0; }
+
+/* ─── COLOR SWATCHES ─── */
+.swatches {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 16px 0 32px;
+}
+.swatch {
+  width: 140px;
+  border: 3px solid var(--gb-darkest);
+}
+.swatch-color {
+  height: 80px;
+}
+.swatch-info {
+  padding: 10px;
+  background: var(--gb-light);
+  font-family: var(--font-terminal);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.swatch-info .name {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* ─── TYPE SPECIMENS ─── */
+.type-row {
+  display: flex;
+  align-items: baseline;
+  gap: 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--gb-mid);
+}
+.type-label {
+  width: 120px;
+  font-family: var(--font-terminal);
+  font-size: 11px;
+  color: var(--gb-mid);
+  flex-shrink: 0;
+}
+.type-sample-display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+}
+.type-sample-body {
+  font-family: var(--font-body);
+}
+.type-sample-terminal {
+  font-family: var(--font-terminal);
+}
+
+/* ─── COMPONENT DEMOS ─── */
+.demo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 16px 0;
+}
+@media (max-width: 768px) {
+  .demo-grid { grid-template-columns: 1fr; }
+}
+
+.demo-box {
+  border: 3px solid var(--gb-darkest);
+  padding: 24px;
+  background: var(--gb-light);
+}
+.demo-box.dark {
+  background: var(--gb-darkest);
+  color: var(--gb-lightest);
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  border: 3px solid var(--gb-darkest);
+  cursor: pointer;
+  text-decoration: none;
+  margin: 4px;
+}
+.btn-primary {
+  background: var(--gb-darkest);
+  color: var(--gb-lightest);
+}
+.btn-secondary {
+  background: var(--gb-light);
+  color: var(--gb-darkest);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--gb-darkest);
+}
+
+/* Terminal window */
+.terminal {
+  background: var(--gb-darkest);
+  border: 3px solid var(--gb-darkest);
+  overflow: hidden;
+}
+.terminal-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--gb-dark);
+  border-bottom: 2px solid var(--gb-darkest);
+}
+.terminal-bar .dot {
+  width: 8px;
+  height: 8px;
+  background: var(--gb-light);
+  border: 1px solid var(--gb-lightest);
+}
+.terminal-bar span {
+  margin-left: auto;
+  font-family: var(--font-terminal);
+  font-size: 10px;
+  color: var(--gb-lightest);
+}
+.terminal pre {
+  padding: 16px;
+  margin: 0;
+  font-family: var(--font-terminal);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--gb-lightest);
+}
+
+/* Dialog box (Pokemon game style) */
+.dialog {
+  border: 3px solid var(--gb-darkest);
+  background: var(--gb-lightest);
+  padding: 20px 24px;
+  position: relative;
+}
+.dialog::after {
+  content: '▼';
+  position: absolute;
+  bottom: 8px;
+  right: 16px;
+  color: var(--gb-darkest);
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* Cards */
+.card {
+  border: 3px solid var(--gb-darkest);
+  background: var(--gb-lightest);
+  padding: 24px;
+}
+.card-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* Progress bar */
+.progress-track {
+  height: 16px;
+  background: var(--gb-light);
+  border: 2px solid var(--gb-darkest);
+  padding: 2px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--gb-darkest);
+}
+
+/* Table */
+.ds-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+.ds-table th {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 3px solid var(--gb-darkest);
+  color: var(--gb-dark);
+}
+.ds-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--gb-mid);
+  font-size: 13px;
+}
+
+/* Spacing tokens */
+.spacing-demo {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin: 16px 0;
+}
+.spacing-block {
+  background: var(--gb-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-terminal);
+  font-size: 10px;
+  color: var(--gb-lightest);
+}
+
+/* Icon row */
+.icon-row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.icon-item {
+  text-align: center;
+  font-family: var(--font-terminal);
+  font-size: 11px;
+  color: var(--gb-mid);
+}
+.icon-item .glyph {
+  font-size: 24px;
+  color: var(--gb-darkest);
+  display: block;
+  margin-bottom: 4px;
+}
+</style>
+</head>
+<body>
+
+<h1>STATUSMON DESIGN SYSTEM</h1>
+
+<!-- ═══════════════════ COLORS ═══════════════════ -->
+<h2>COLOR TOKENS</h2>
+<p>Game Boy-inspired 5-shade palette extracted from original hardware. All UI elements use only these values.</p>
+
+<div class="swatches">
+  <div class="swatch">
+    <div class="swatch-color" style="background:#b8c19e"></div>
+    <div class="swatch-info">
+      <span class="name">GB Lightest</span>
+      #b8c19e<br>--gb-lightest<br>Backgrounds
+    </div>
+  </div>
+  <div class="swatch">
+    <div class="swatch-color" style="background:#b8c0a4"></div>
+    <div class="swatch-info">
+      <span class="name">GB Light</span>
+      #b8c0a4<br>--gb-light<br>Surfaces
+    </div>
+  </div>
+  <div class="swatch">
+    <div class="swatch-color" style="background:#858b77"></div>
+    <div class="swatch-info">
+      <span class="name">GB Mid</span>
+      #858b77<br>--gb-mid<br>Dim text
+    </div>
+  </div>
+  <div class="swatch">
+    <div class="swatch-color" style="background:#515548"></div>
+    <div class="swatch-info">
+      <span class="name">GB Dark</span>
+      #515548<br>--gb-dark<br>Borders, labels
+    </div>
+  </div>
+  <div class="swatch">
+    <div class="swatch-color" style="background:#474b3c"></div>
+    <div class="swatch-info">
+      <span class="name">GB Darkest</span>
+      #474b3c<br>--gb-darkest<br>Text, heavy
+    </div>
+  </div>
+</div>
+
+<h3>USAGE RULES</h3>
+<table class="ds-table">
+  <thead><tr><th>Element</th><th>Token</th><th>Value</th></tr></thead>
+  <tbody>
+    <tr><td>Page background</td><td>--gb-lightest</td><td>#b8c19e</td></tr>
+    <tr><td>Card / surface background</td><td>--gb-light</td><td>#b8c0a4</td></tr>
+    <tr><td>Dim text, comments</td><td>--gb-mid</td><td>#858b77</td></tr>
+    <tr><td>Borders, section labels</td><td>--gb-dark</td><td>#515548</td></tr>
+    <tr><td>Primary text, headings</td><td>--gb-darkest</td><td>#474b3c</td></tr>
+    <tr><td>Terminal background</td><td>--gb-darkest</td><td>#474b3c</td></tr>
+    <tr><td>Terminal text</td><td>--gb-lightest</td><td>#b8c19e</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- ═══════════════════ TYPOGRAPHY ═══════════════════ -->
+<h2>TYPOGRAPHY</h2>
+<p>Three fonts, three roles. No mixing.</p>
+
+<div class="type-row">
+  <div class="type-label">DISPLAY<br>GameFreak</div>
+  <div class="type-sample-display" style="font-size:32px">STATUSMON</div>
+</div>
+<div class="type-row">
+  <div class="type-label">DISPLAY<br>GameFreak</div>
+  <div class="type-sample-display" style="font-size:20px">HOW IT WORKS</div>
+</div>
+<div class="type-row">
+  <div class="type-label">DISPLAY<br>GameFreak</div>
+  <div class="type-sample-display" style="font-size:14px">SECTION LABEL</div>
+</div>
+<div class="type-row">
+  <div class="type-label">BODY<br>PKMN RBYGSC</div>
+  <div class="type-sample-body" style="font-size:15px">Train Pokemon companions across your Claude Code sessions. Every token earns XP.</div>
+</div>
+<div class="type-row">
+  <div class="type-label">BODY<br>PKMN RBYGSC</div>
+  <div class="type-sample-body" style="font-size:13px">Smaller body text for descriptions, table cells, and secondary content.</div>
+</div>
+<div class="type-row">
+  <div class="type-label">TERMINAL<br>Fira Code</div>
+  <div class="type-sample-terminal" style="font-size:13px">$ claude plugin install statusmon@statusmon</div>
+</div>
+<div class="type-row">
+  <div class="type-label">TERMINAL<br>Fira Code</div>
+  <div class="type-sample-terminal" style="font-size:11px">trainer.json  pokedex.json  cache/</div>
+</div>
+
+<h3>RULES</h3>
+<table class="ds-table">
+  <thead><tr><th>Font</th><th>Usage</th><th>Always</th></tr></thead>
+  <tbody>
+    <tr><td style="font-family:var(--font-display);text-transform:uppercase">GameFreak</td><td>Logo, headings, section labels, buttons</td><td>UPPERCASE only</td></tr>
+    <tr><td style="font-family:var(--font-body)">PKMN RBYGSC</td><td>Body copy, descriptions, table text</td><td>Mixed case OK</td></tr>
+    <tr><td style="font-family:var(--font-terminal)">Fira Code</td><td>Terminal windows, code, install commands</td><td>As-is</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- ═══════════════════ SPACING ═══════════════════ -->
+<h2>SPACING</h2>
+
+<div class="spacing-demo">
+  <div class="spacing-block" style="width:4px;height:4px"></div>
+  <div class="spacing-block" style="width:8px;height:8px"></div>
+  <div class="spacing-block" style="width:12px;height:12px">12</div>
+  <div class="spacing-block" style="width:16px;height:16px">16</div>
+  <div class="spacing-block" style="width:24px;height:24px">24</div>
+  <div class="spacing-block" style="width:32px;height:32px">32</div>
+  <div class="spacing-block" style="width:48px;height:48px">48</div>
+  <div class="spacing-block" style="width:64px;height:64px">64</div>
+</div>
+
+<table class="ds-table">
+  <thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead>
+  <tbody>
+    <tr><td>xs</td><td>4px</td><td>Tight gaps, inline spacing</td></tr>
+    <tr><td>sm</td><td>8px</td><td>Icon gaps, small padding</td></tr>
+    <tr><td>md</td><td>16px</td><td>Card padding, paragraph margin</td></tr>
+    <tr><td>lg</td><td>24px</td><td>Section gaps, card padding</td></tr>
+    <tr><td>xl</td><td>32px</td><td>Section margin</td></tr>
+    <tr><td>2xl</td><td>48px</td><td>Major section breaks</td></tr>
+    <tr><td>3xl</td><td>64px</td><td>Page-level spacing</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- ═══════════════════ BORDERS ═══════════════════ -->
+<h2>BORDERS</h2>
+<p>No rounded corners. All borders are sharp pixel edges.</p>
+
+<div class="demo-grid">
+  <div style="border:1px solid var(--gb-mid);padding:16px">1px -- gb-mid (subtle dividers)</div>
+  <div style="border:2px solid var(--gb-dark);padding:16px">2px -- gb-dark (secondary borders)</div>
+  <div style="border:3px solid var(--gb-darkest);padding:16px">3px -- gb-darkest (primary borders)</div>
+  <div style="border:3px solid var(--gb-darkest);border-bottom:6px solid var(--gb-darkest);padding:16px">3px + 6px bottom (heavy emphasis)</div>
+</div>
+
+<hr>
+
+<!-- ═══════════════════ COMPONENTS ═══════════════════ -->
+<h2>COMPONENTS</h2>
+
+<h3>BUTTONS</h3>
+<div style="margin:16px 0">
+  <a class="btn btn-primary">PRIMARY</a>
+  <a class="btn btn-secondary">SECONDARY</a>
+  <a class="btn btn-ghost">GHOST</a>
+</div>
+
+<h3>TERMINAL WINDOW</h3>
+<div class="terminal" style="max-width:500px;margin:16px 0">
+  <div class="terminal-bar">
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    <span>claude code</span>
+  </div>
+  <pre>$ claude plugin install statusmon
+Installing statusmon@0.1.0...
+
+Done. Your starter Pokemon awaits.</pre>
+</div>
+
+<h3>DIALOG BOX</h3>
+<div class="dialog" style="max-width:400px;margin:16px 0">
+  What? TANGELA is evolving!<br><br>
+  Congratulations! Your TANGELA evolved into TANGROWTH!
+</div>
+
+<h3>CARDS</h3>
+<div class="demo-grid">
+  <div class="card">
+    <div class="card-title">ANSI SPRITES</div>
+    <p style="margin:0">Full-color Pokemon sprites rendered with bilinear interpolation using Unicode half-block characters.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">REAL EVOLUTION</div>
+    <p style="margin:0">Evolution at the actual game levels from PokeAPI. Charmander evolves at Lv.16.</p>
+  </div>
+</div>
+
+<h3>PROGRESS BAR</h3>
+<div style="max-width:300px;margin:16px 0">
+  <div style="font-family:var(--font-body);font-size:13px;margin-bottom:6px">LV 13 -> 20</div>
+  <div class="progress-track">
+    <div class="progress-fill" style="width:65%"></div>
+  </div>
+</div>
+<div style="max-width:300px;margin:16px 0">
+  <div style="font-family:var(--font-body);font-size:13px;margin-bottom:6px">LV 4 -> 16</div>
+  <div class="progress-track">
+    <div class="progress-fill" style="width:25%"></div>
+  </div>
+</div>
+
+<h3>TABLE</h3>
+<table class="ds-table" style="max-width:500px">
+  <thead><tr><th>Generation</th><th>Pokemon</th><th>Unlock</th></tr></thead>
+  <tbody>
+    <tr><td>Gen 1</td><td>#001 - #151</td><td>Start</td></tr>
+    <tr><td>Gen 2</td><td>#001 - #251</td><td>50 sessions</td></tr>
+    <tr><td>Gen 3</td><td>#001 - #386</td><td>100 sessions</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- ═══════════════════ ICONS ═══════════════════ -->
+<h2>ICONS</h2>
+<p>No color emoji. Pixel-style Unicode glyphs only.</p>
+
+<div class="icon-row">
+  <div class="icon-item"><span class="glyph">▓▒░</span>sprites</div>
+  <div class="icon-item"><span class="glyph">▲▲▲</span>evolution</div>
+  <div class="icon-item"><span class="glyph">■■■</span>pokedex</div>
+  <div class="icon-item"><span class="glyph">►►►</span>generations</div>
+  <div class="icon-item"><span class="glyph">━━━</span>progress</div>
+  <div class="icon-item"><span class="glyph">▀▄█</span>half-block</div>
+  <div class="icon-item"><span class="glyph">●○○</span>dots</div>
+  <div class="icon-item"><span class="glyph">◄►▲▼</span>arrows</div>
+</div>
+
+<hr>
+
+<!-- ═══════════════════ DO / DON'T ═══════════════════ -->
+<h2>RULES</h2>
+
+<div class="demo-grid">
+  <div class="demo-box">
+    <div class="card-title" style="color:var(--gb-dark)">DO</div>
+    <ul style="padding-left:20px;font-size:13px;line-height:2">
+      <li>Use only the 5-shade palette</li>
+      <li>Keep all corners sharp (border-radius: 0)</li>
+      <li>GameFreak font always UPPERCASE</li>
+      <li>Pixel-style Unicode icons only</li>
+      <li>3px borders for primary elements</li>
+      <li>Fira Code for all terminal/code</li>
+      <li>Scanline overlay on page background</li>
+    </ul>
+  </div>
+  <div class="demo-box">
+    <div class="card-title" style="color:var(--gb-dark)">DON'T</div>
+    <ul style="padding-left:20px;font-size:13px;line-height:2">
+      <li>No color emoji anywhere on site</li>
+      <li>No rounded corners</li>
+      <li>No gradients</li>
+      <li>No shadows or drop-shadows</li>
+      <li>No lowercase in GameFreak font</li>
+      <li>No colors outside the palette</li>
+      <li>No generic fonts (Inter, Arial, etc.)</li>
+    </ul>
+  </div>
+</div>
+
+<hr>
+<p style="color:var(--gb-mid);font-size:12px;text-align:center">STATUSMON DESIGN SYSTEM v0.1.0</p>
+
+</body>
+</html>
