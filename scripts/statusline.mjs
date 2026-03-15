@@ -225,7 +225,7 @@ async function render(state, level) {
 
   // XP bar with type color
   const pct = Math.min(1, level / releaseLevel);
-  const barW = 20;
+  const barW = 30;
   const filled = Math.round(pct * barW);
   const barFill = `${tc}${'━'.repeat(filled)}${RESET}`;
   const barEmpty = `${tcd}${'─'.repeat(barW - filled)}${RESET}`;
