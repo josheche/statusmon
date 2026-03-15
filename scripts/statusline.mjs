@@ -230,45 +230,32 @@ async function render(state, level) {
   const barFill = `${tc}${'━'.repeat(filled)}${RESET}`;
   const barEmpty = `${tcd}${'─'.repeat(barW - filled)}${RESET}`;
 
-  const info = [
-    `${tc}${BOLD}${name.toUpperCase()}${RESET}${indicator}`,
-    `${DIM}#${dexNum} · ${genus}${RESET}`,
-    `${DIM}LV${RESET} ${BOLD}${level}${RESET}  ${DIM}-> ${releaseLevel}${RESET}`,
-    `${barFill}${barEmpty}`,
-    `${emoji} ${tc}${typeStr}${RESET}`,
-    `${tcd}XP ${RESET}${DIM}${totalXp}${RESET}  ${tcd}GEN ${RESET}${DIM}${gen}${RESET}${dexCount > 0 ? `  ${tcd}DEX ${RESET}${DIM}#${dexCount}${RESET}` : ''}`,
-  ];
+  // All info compressed to 3 lines above sprite
+  console.log(
+    ` ${emoji} ${tc}${BOLD}${name.toUpperCase()}${RESET}${indicator} ${DIM}#${dexNum} · ${genus} · Gen ${gen}${RESET}`,
+  );
+  console.log(
+    ` ${DIM}LV${RESET} ${BOLD}${level}${RESET} ${DIM}-> ${releaseLevel}${RESET}`,
+  );
+  console.log(` ${barFill}${barEmpty}`);
 
-  // Sprite left, info right — sprite rows always have ANSI content
-  // so Claude Code's statusline renderer won't strip them
-  let spriteRows = [];
+  // Sprite below
   try {
-    spriteRows = await miniSprite(state.species_id);
-  } catch {}
-
-  if (spriteRows.length > 0) {
-    const offset = Math.max(
-      0,
-      Math.floor((spriteRows.length - info.length) / 2),
+    const spriteRows = await miniSprite(
+      state.species_id,
+      state.sprite_size || 48,
     );
-    for (let i = 0; i < spriteRows.length; i++) {
-      const infoIdx = i - offset;
-      const infoLine =
-        infoIdx >= 0 && infoIdx < info.length ? '  ' + info[infoIdx] : '';
-      console.log(` ${spriteRows[i]}${infoLine}`);
-    }
-  } else {
-    info.forEach((line) => console.log(` ${line}`));
-  }
+    spriteRows.forEach((line) => console.log(` ${line}`));
+  } catch {}
 }
 
-async function miniSprite(pokemonId) {
+async function miniSprite(pokemonId, size = 48) {
   const { PNG } = await import('pngjs');
   const { fetchSprite } = await import('../lib/cache.mjs');
   const buf = await fetchSprite(pokemonId);
   const src = PNG.sync.read(buf);
-  const w = 48,
-    h = 48;
+  const w = size,
+    h = size;
 
   // Bilinear interpolation for smoother downscaling
   function sample(fx, fy) {
