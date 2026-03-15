@@ -230,29 +230,51 @@ async function render(state, level) {
   const barFill = `${tc}${'━'.repeat(filled)}${RESET}`;
   const barEmpty = `${tcd}${'─'.repeat(barW - filled)}${RESET}`;
 
-  // Text left, sprite right — text is always flush left, sprite floats
+  // Compact info — no empty spacer lines
   const info = [
-    ``,
     `${tc}${BOLD}${name.toUpperCase()}${RESET}${indicator}`,
     `${DIM}#${dexNum} · ${genus}${RESET}`,
-    ``,
-    `${DIM}LV${RESET} ${BOLD}${level}${RESET}  ${DIM}→ ${releaseLevel}${RESET}`,
+    `${DIM}LV${RESET} ${BOLD}${level}${RESET}  ${DIM}-> ${releaseLevel}${RESET}`,
     `${barFill}${barEmpty}`,
-    ``,
     `${emoji} ${tc}${typeStr}${RESET}`,
-    ``,
     `${tcd}XP ${RESET}${DIM}${totalXp}${RESET}  ${tcd}GEN ${RESET}${DIM}${gen}${RESET}${dexCount > 0 ? `  ${tcd}DEX ${RESET}${DIM}#${dexCount}${RESET}` : ''}`,
   ];
 
-  // Print info block, then sprite below
-  info.forEach((line) => console.log(` ${line}`));
-
+  // Text left, sprite right
   let spriteRows = [];
   try {
     spriteRows = await miniSprite(state.species_id);
   } catch {}
+
   if (spriteRows.length > 0) {
-    spriteRows.forEach((line) => console.log(` ${line}`));
+    const infoW = 30;
+    // Pad info to match sprite height so nothing gets clipped
+    const offset = Math.max(
+      0,
+      Math.floor((spriteRows.length - info.length) / 2),
+    );
+    const paddedInfo = [];
+    for (
+      let i = 0;
+      i < Math.max(spriteRows.length, info.length + offset);
+      i++
+    ) {
+      const infoIdx = i - offset;
+      paddedInfo.push(
+        infoIdx >= 0 && infoIdx < info.length ? info[infoIdx] : '',
+      );
+    }
+    for (let i = 0; i < paddedInfo.length; i++) {
+      const rawInfo = paddedInfo[i];
+      const stripped = rawInfo.replace(/\x1b\[[0-9;]*m/g, '');
+      const emojiCount = (stripped.match(/[\u{1F300}-\u{1FFFF}]/gu) || [])
+        .length;
+      const padLen = Math.max(0, infoW - stripped.length - emojiCount);
+      const sprite = i < spriteRows.length ? spriteRows[i] : ' '.repeat(48);
+      console.log(` ${rawInfo}${' '.repeat(padLen)}${sprite}`);
+    }
+  } else {
+    info.forEach((line) => console.log(` ${line}`));
   }
 }
 
