@@ -1,6 +1,8 @@
 import esbuild from 'esbuild';
 import fs from 'fs';
 
+// Clean before build
+fs.rmSync('dist', { recursive: true, force: true });
 fs.mkdirSync('dist', { recursive: true });
 
 await esbuild.build({

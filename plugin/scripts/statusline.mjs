@@ -22864,7 +22864,7 @@ async function renderSprite(pokemonId, maxWidth = 32) {
       const top = getPixel(data, width, x * scale, y * scale);
       const bot = getPixel(data, width, x * scale, (y + 1) * scale);
       if (top.a < 64 && bot.a < 64) {
-        line += ' ';
+        line += '\x1B[0m ';
       } else if (top.a < 64) {
         line += `\x1B[38;2;${bot.r};${bot.g};${bot.b}m\u2584\x1B[0m`;
       } else if (bot.a < 64) {
