@@ -7,8 +7,8 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/statusmon"><img src="https://img.shields.io/npm/v/statusmon?style=flat&color=78C850&label=npm" alt="npm version" /></a>
-  <a href="https://github.com/josheche/statusmon/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/statusmon?style=flat&color=6890F0" alt="license" /></a>
+  <a href="https://www.npmjs.com/package/@josheche/statusmon"><img src="https://img.shields.io/npm/v/@josheche/statusmon?style=flat&color=78C850&label=npm" alt="npm version" /></a>
+  <a href="https://github.com/josheche/statusmon/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@josheche/statusmon?style=flat&color=6890F0" alt="license" /></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/node/v/statusmon?style=flat&color=F8D030" alt="node version" /></a>
   <a href="https://github.com/josheche/statusmon"><img src="https://img.shields.io/github/stars/josheche/statusmon?style=flat&color=F08030" alt="stars" /></a>
 </p>
