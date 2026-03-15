@@ -1,5 +1,5 @@
 {
-  "name": "statusmon",
+  "name": "@josheche/statusmon",
   "version": "0.1.0",
   "type": "module",
   "description": "Train a Pokemon companion across your Claude Code sessions",
