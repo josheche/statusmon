@@ -401,6 +401,41 @@ section p {
   margin-right: 8px;
 }
 
+/* ─── TERMINAL EXAMPLES ─── */
+.terminal-examples {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  margin-top: 48px;
+}
+.terminal-window {
+  background: var(--bg-surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.terminal-window .titlebar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.terminal-window .titlebar span {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.terminal-body {
+  padding: 16px 20px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  margin: 0;
+  color: var(--text);
+}
+
 /* ─── CODE BLOCK ─── */
 .code-block {
   background: var(--bg-surface);
@@ -545,22 +580,56 @@ footer .pokeball::after {
     </div>
   </div>
 
-  <pre class="code-block"><span class="comment"># Early session — just getting started</span>
-🔥 <span class="val">CHARMANDER</span> <span class="comment">#4 · Lizard Pokemon · Gen 1</span>
-LV <span class="key">8</span>  -> 16
-<span style="color:#F08030">━━━━━━━━━━</span><span class="comment">────────────────────</span>
+  <div class="terminal-examples">
+    <div class="terminal-window">
+      <div class="titlebar">
+        <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+        <span>claude code</span>
+      </div>
+      <pre class="terminal-body">
+<span class="comment">❯ fix the auth middleware</span>
 
-<span class="comment"># Mid evolution — your companion is growing</span>
-💧 <span style="color:#6890F0">WARTORTLE</span> <span class="comment">#8 · Turtle Pokemon · Gen 1</span>
-LV <span class="key">28</span> -> 36
-<span style="color:#6890F0">━━━━━━━━━━━━━━━━━━━━━━━</span><span class="comment">───────</span>
+● Reading src/middleware/auth.ts
+● <span class="key">Edit</span>(src/middleware/auth.ts)
+  Updated JWT validation logic
 
-<span class="comment"># Final form — fully evolved, training to release</span>
-⚡ <span style="color:#F8D030">PIKACHU</span> ★ <span class="comment">#25 · Mouse Pokemon · Gen 1</span>
-LV <span class="key">52</span> -> 60
+<span style="color:#F08030;font-weight:bold">🔥 CHARMANDER</span> <span class="comment">#4 · Lizard Pokemon · Gen 1</span>
+<span class="comment">LV</span> <span class="key">8</span>  <span class="comment">-> 16</span>
+<span style="color:#F08030">━━━━━━━━━━</span><span class="comment">────────────────────</span></pre>
+    </div>
+
+    <div class="terminal-window">
+      <div class="titlebar">
+        <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+        <span>claude code</span>
+      </div>
+      <pre class="terminal-body">
+<span class="comment">❯ refactor the database layer</span>
+
+● Reading lib/db.ts, lib/models/*.ts
+● <span class="key">Edit</span>(lib/db.ts) — 3 files changed
+
+<span style="color:#6890F0;font-weight:bold">💧 WARTORTLE</span> ✨ <span class="comment">#8 · Turtle Pokemon · Gen 1</span>
+<span class="comment">LV</span> <span class="key">28</span> <span class="comment">-> 36</span>
+<span style="color:#6890F0">━━━━━━━━━━━━━━━━━━━━━━━</span><span class="comment">───────</span></pre>
+    </div>
+
+    <div class="terminal-window">
+      <div class="titlebar">
+        <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+        <span>claude code</span>
+      </div>
+      <pre class="terminal-body">
+<span class="comment">❯ add tests for the new API</span>
+
+● Writing test/api.test.ts
+● <span class="key">Bash</span>(npm test) — 24 tests passing
+
+<span style="color:#F8D030;font-weight:bold">⚡ PIKACHU</span> ★ <span class="comment">#25 · Mouse Pokemon · Gen 1</span>
+<span class="comment">LV</span> <span class="key">52</span> <span class="comment">-> 60</span>
 <span style="color:#F8D030">━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="comment">────</span></pre>
-
-  <p style="margin-top: 16px">Each entry includes a full-color ANSI sprite rendered directly in your terminal below the status info.</p>
+    </div>
+  </div>
 </section>
 
 <section id="generations">
